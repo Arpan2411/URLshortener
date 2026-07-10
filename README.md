@@ -158,60 +158,236 @@ Every request travels through multiple well-defined layers before reaching the d
                     HTTP Response
 
 ```
+# Current Deployment Architecture
+
+```mermaid
+flowchart LR
+
+A[Client / Browser]
+
+B[Express Application]
+
+C[Rate Limiter]
+
+D[Controllers]
+
+E[Service Layer]
+
+F[Repository Layer]
+
+G[(Redis)]
+
+H[(MongoDB)]
+
+A --> B
+
+B --> C
+
+C --> D
+
+D --> E
+
+E --> F
+
+F --> G
+
+F --> H
+```
+
+The current deployment is ideal for:
+
+- Local development
+- Learning backend architecture
+- Small production deployments
+- Personal projects
+- MVP applications
 
 ---
 
-# System Design
+# Current Request Flow
 
-The application follows a layered architecture where each layer is responsible for one specific task.
-
-```
-
-Presentation Layer
-
-↓
-
-Routing Layer
-
-↓
-
-Validation Layer
-
-↓
-
-Middleware Layer
-
-↓
-
-Controller Layer
-
-↓
-
-Business Logic Layer
-
-↓
-
-Repository Layer
-
-↓
-
-Database Layer
-
-↓
-
-Response Layer
+Every request follows the following path:
 
 ```
 
-Each layer only communicates with the adjacent layer.
+Client
 
-This makes the project:
+↓
 
-- Highly maintainable
-- Easily testable
-- Easily scalable
-- Easy to debug
-- Suitable for production deployment
+Express Server
+
+↓
+
+Validation Middleware
+
+↓
+
+Rate Limiter
+
+↓
+
+Controller
+
+↓
+
+Service
+
+↓
+
+Repository
+
+↓
+
+Redis Cache
+
+↓
+
+MongoDB
+
+↓
+
+JSON Response
+
+```
+
+The architecture intentionally separates business logic from infrastructure logic, making it easy to introduce additional services in the future.
+
+---
+
+# Production Scalable Architecture
+
+Although the current implementation runs as a single application, the codebase is intentionally structured so it can evolve into a distributed system.
+
+```mermaid
+flowchart LR
+
+Client
+
+↓
+
+DNS
+
+↓
+
+Load Balancer
+
+↓
+
+Node 1
+
+↓
+
+Redis
+
+↓
+
+MongoDB
+
+Load Balancer --> Node2
+
+Load Balancer --> Node3
+
+Node2 --> Redis
+
+Node3 --> Redis
+
+Redis --> MongoDB
+```
+
+---
+
+# Future Production Architecture
+
+As traffic increases, additional infrastructure components can be introduced without significant changes to the application's internal code.
+
+```mermaid
+flowchart LR
+
+Client
+
+↓
+
+DNS
+
+↓
+
+CDN
+
+↓
+
+Nginx
+
+↓
+
+Load Balancer
+
+↓
+
+API Server 1
+
+↓
+
+Redis Cluster
+
+↓
+
+MongoDB Replica Set
+
+Load Balancer --> API Server 2
+
+Load Balancer --> API Server 3
+
+API Server 2 --> Redis Cluster
+
+API Server 3 --> Redis Cluster
+
+Redis Cluster --> MongoDB Replica Set
+
+API Server 1 --> Logging
+
+API Server 2 --> Logging
+
+API Server 3 --> Logging
+
+Logging --> Grafana
+
+Logging --> Prometheus
+```
+
+---
+
+# Component Responsibilities
+
+| Component | Responsibility |
+|------------|----------------|
+| Client | Sends HTTP requests to the API |
+| Load Balancer | Distributes traffic across multiple application instances |
+| Express Application | Handles incoming requests |
+| Validation Middleware | Validates incoming payloads |
+| Rate Limiter | Prevents abuse and request flooding |
+| Controller | Handles HTTP-specific logic |
+| Service Layer | Executes business rules |
+| Repository Layer | Performs database operations |
+| Redis | High-speed caching layer |
+| MongoDB | Persistent storage |
+| Winston | Structured logging |
+| Docker | Containerization |
+| Docker Compose | Local orchestration |
+
+---
+
+# Scalability Strategy
+
+The project is designed so each layer can scale independently.
+
+- Multiple Node.js instances can be added behind a load balancer.
+- Redis can evolve into a Redis Cluster.
+- MongoDB can be upgraded to a Replica Set or Sharded Cluster.
+- Background workers can be introduced for analytics and cleanup jobs.
+- Reverse proxies such as Nginx can provide SSL termination, compression, and request routing.
+- Monitoring systems such as Prometheus and Grafana can be integrated for observability.
+
+Because the business logic is isolated from infrastructure concerns, these upgrades require minimal modifications to the existing codebase.
 
 ---
 
