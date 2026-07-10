@@ -56,28 +56,29 @@ const connectRedis = async () => {
   } catch (error) {
     logger.warn('Redis connection failed; continuing without it', error);
     isRedisConnected = false;
-    // Return null instead of throwing - app should work without Redis
+    client = null;
     return null;
   }
 };
 
 const getRedisClient = () => {
-  if (!client) {
-    throw new Error('Redis client not initialized');
-  }
-  return client;
+  return isRedisAvailable() ? client : null;
 };
 
 const disconnectRedis = async () => {
   try {
     if (client) {
       await client.quit();
+      client = null;
       logger.info('Redis disconnected');
     }
   } catch (error) {
     logger.error('Redis disconnection error:', error);
   }
 };
+
+const isRedisAvailable = () =>
+    Boolean(client && client.isReady && isRedisConnected);
 
 const cacheHelpers = {
   /**
@@ -214,4 +215,11 @@ const cacheHelpers = {
   }
 };
 
-module.exports = { connectRedis, getRedisClient, disconnectRedis, cacheHelpers, DEFAULT_CACHE_TTL };
+module.exports = {
+  connectRedis,
+  getRedisClient,
+  disconnectRedis,
+  isRedisAvailable,
+  cacheHelpers,
+  DEFAULT_CACHE_TTL,
+};

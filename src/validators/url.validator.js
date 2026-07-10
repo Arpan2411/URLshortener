@@ -16,6 +16,26 @@ const urlValidator = {
         'any.required': 'Original URL is required',
         'string.max': 'URL is too long (max 2048 characters)',
       }),
+
+    customCode: Joi.string()
+      .pattern(/^[a-zA-Z0-9_-]+$/)
+      .min(3)
+      .max(20)
+      .optional()
+      .messages({
+        'string.pattern.base':
+          'Custom code may contain only letters, numbers, "_" and "-"',
+        'string.min':
+          'Custom code must be at least 3 characters',
+        'string.max':
+          'Custom code cannot exceed 20 characters',
+      }),
+    expiresAt: Joi.date()
+      .greater('now')
+      .optional()
+      .messages({
+        'date.greater': 'Expiration date must be in the future',
+      }),
   }),
 
   // Get original URL validation

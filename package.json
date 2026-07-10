@@ -16,35 +16,36 @@
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.js",
     "format": "prettier --write src/**/*.js",
-    "test:redis": "node scripts/test-redis.js",
-    "test:cache": "node scripts/test-cache.js"
+    "test:rate-limit": "node scripts/test-rate-limit.js",
+    "cleanup": "node src/scripts/cleanup.js",
+    "test:utils": "node src/scripts/test-utils.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
+    "express-validator": "^7.3.2",
     "helmet": "^8.2.0",
     "joi": "^18.2.3",
     "mongoose": "^9.7.4",
     "nanoid": "^3.3.7",
+    "on-headers": "^1.1.0",
+    "rate-limit-redis": "^5.0.0",
     "redis": "^6.1.0",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
-    "winston": "^3.19.0",
-    "xss": "^1.0.15"
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "eslint": "^10.6.0",
     "faker": "^6.6.6",
     "jest": "^30.4.2",
-    "mongodb-memory-server": "^11.2.0",
     "nodemon": "^3.1.14",
     "prettier": "^3.9.5",
     "supertest": "^7.2.2"

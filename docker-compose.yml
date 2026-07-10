@@ -20,6 +20,9 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=redis123
+      - RATE_LIMIT_WINDOW_MS=600000
+      - RATE_LIMIT_MAX_REQUESTS=100
+      - RATE_LIMIT_ENABLED=true
     depends_on:
       - mongodb
       - redis
@@ -43,7 +46,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin123
       - MONGO_INITDB_DATABASE=urlshortner
-    command: ["--auth"]
+    command: [ "--auth" ]
     volumes:
       - mongodb-data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -58,9 +61,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin123
-      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_URL=mongodb://admin:admin123@mongodb:27017/?authSource=admin
     depends_on:
       - mongodb
     networks:
@@ -89,7 +90,7 @@ services:
     environment:
       # - REDIS_HOSTS=local:redis:6379
       # - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
-        - REDIS_HOSTS=local:redis:6379:0:${REDIS_PASSWORD:-redis123}
+      - REDIS_HOSTS=local:redis:6379:0:${REDIS_PASSWORD:-redis123}
     depends_on:
       - redis
     networks:
