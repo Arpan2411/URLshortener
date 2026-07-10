@@ -292,7 +292,6 @@ Node2 --> Redis
 Node3 --> Redis
 
 Redis --> MongoDB
-```
 
 ---
 
