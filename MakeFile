@@ -1,0 +1,34 @@
+# Makefile
+.PHONY: help up down logs build rebuild clean shell
+
+help:
+	@echo "Available commands:"
+	@echo "  make up        - Start all services"
+	@echo "  make down      - Stop all services"
+	@echo "  make logs      - View logs"
+	@echo "  make build     - Build images"
+	@echo "  make rebuild   - Rebuild and start"
+	@echo "  make clean     - Clean everything"
+	@echo "  make shell     - Access app container"
+
+up:
+	docker-compose up -d
+
+down:
+	docker-compose down
+
+logs:
+	docker-compose logs -f
+
+build:
+	docker-compose build
+
+rebuild:
+	docker-compose up -d --build
+
+clean:
+	docker-compose down -v
+	docker system prune -f
+
+shell:
+	docker exec -it urlshortner-app sh

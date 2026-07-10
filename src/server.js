@@ -7,15 +7,20 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    // Connect to MongoDB
-    await connectDB();
-    logger.info('MongoDB connected successfully');
+    try {
+      await connectDB();
+      logger.info('MongoDB connected successfully');
+    } catch (error) {
+      logger.warn('MongoDB not available at startup; continuing without it', error);
+    }
 
-    // Connect to Redis
-    await connectRedis();
-    logger.info('Redis connected successfully');
+    try {
+      await connectRedis();
+      logger.info('Redis connected successfully');
+    } catch (error) {
+      logger.warn('Redis not available at startup; continuing without it', error);
+    }
 
-    // Start server
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
       logger.info(`Environment: ${process.env.NODE_ENV}`);
